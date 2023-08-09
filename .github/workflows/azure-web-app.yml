@@ -31,7 +31,23 @@ jobs:
 
       # - name: Push Docker image to registry
       #   run: docker push $DOCKER_IMAGE_NAME
-
+      - name: Set Web App ACR authentication
+          uses: Azure/appservice-settings@v1
+          with:
+          app-name: 'node-rnc'
+          app-settings-json: |
+            [
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                    "value": "${{ env.DOCKER_PASSWORD }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                    "value": "${{ env.DOCKER_USERNAME }}",
+                    "slotSetting": false
+                }
+            ]
       - name: Login to Azure
         uses: azure/login@v1
         with:
