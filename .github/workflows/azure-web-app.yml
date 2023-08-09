@@ -31,10 +31,15 @@ jobs:
 
       # - name: Push Docker image to registry
       #   run: docker push $DOCKER_IMAGE_NAME
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ env.AZURE_CREDENTIALS }}
+          
       - name: Set Web App ACR authentication
           uses: Azure/appservice-settings@v1
           with:
-          app-name: 'node-rnc'
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           app-settings-json: |
             [
                 {
@@ -48,10 +53,6 @@ jobs:
                     "slotSetting": false
                 }
             ]
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ env.AZURE_CREDENTIALS }}
 
       - uses: azure/webapps-deploy@v2
         with:
