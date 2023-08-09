@@ -1,0 +1,44 @@
+name: Deploy to Azure Web App Service
+
+on:
+  push:
+    branches:
+      - webapp
+
+env:
+  AZURE_WEBAPP_NAME: dpedocs
+  DOCKER_IMAGE_NAME: sivanandha/siva-hugo:latest
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t $DOCKER_IMAGE_NAME .
+
+      - name: Push Docker image to registry
+        run: docker push $DOCKER_IMAGE_NAME
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ env.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App Service
+        uses: azure/webapps-container-deploy@v1
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          images: $DOCKER_IMAGE_NAME
