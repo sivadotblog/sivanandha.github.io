@@ -26,11 +26,11 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t $DOCKER_IMAGE_NAME .
+      # - name: Build Docker image
+      #   run: docker build -t $DOCKER_IMAGE_NAME .
 
-      - name: Push Docker image to registry
-        run: docker push $DOCKER_IMAGE_NAME
+      # - name: Push Docker image to registry
+      #   run: docker push $DOCKER_IMAGE_NAME
 
       - name: Login to Azure
         uses: azure/login@v1
